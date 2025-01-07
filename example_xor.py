@@ -1,35 +1,17 @@
 from src.bool_sim import BooleanSolver
-from src.grn import GRN
+from src.network_builder import Builder
 from src.utils import plot_trajectory, print_boolean_rules, print_attractors
 
-
-def create_network():
-    """Create a GRN implementing XOR logic."""
-    grn = GRN()
-
-    grn.add_input_species("X1")
-    grn.add_input_species("X2")
-    grn.add_species("Y", 0.1)
-
-    regulators1 = [
-        {"name": "X1", "type": -1, "Kd": 5, "n": 2},
-        {"name": "X2", "type": 1, "Kd": 5, "n": 3},
-    ]
-    products1 = [{"name": "Y"}]
-    grn.add_gene(10, regulators1, products1)
-
-    regulators2 = [
-        {"name": "X1", "type": 1, "Kd": 5, "n": 2},
-        {"name": "X2", "type": -1, "Kd": 5, "n": 3},
-    ]
-    products2 = [{"name": "Y"}]
-    grn.add_gene(10, regulators2, products2)
-
-    return grn
-
-
 def main():
-    grn = create_network()
+    grn = Builder()
+    X1 = grn.species("X1")
+    X2 = grn.species("X2")
+    Y = grn.species("Y", 0.1)
+
+    grn.gene([X1.represses(Kd=5, n=2), X2.activates(Kd=5, n=3)], [Y], 10)
+    grn.gene([X1.activates(Kd=5, n=2), X2.represses(Kd=5, n=3)], [Y], 10)
+    grn = grn.grn
+    grn.plot_network()
     bool_solver = BooleanSolver(grn)
 
     print_boolean_rules(bool_solver)
