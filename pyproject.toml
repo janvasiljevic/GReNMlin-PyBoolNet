@@ -13,6 +13,9 @@ matplotlib = "^3.10.0"
 pandas = "^2.2.3"
 scipy = "^1.15.0"
 pyboolnet = { git = "https://github.com/hklarner/pyboolnet" }
+python-libsbml = "^5.20.4"
+simplesbml = "^2.3.0"
+numexpr = "^2.10.2"
 
 
 [build-system]
