@@ -18,14 +18,14 @@ def plot_trajectory(
     times = np.arange(len(trajectory)) - 0.5
     for species in species_names:
         values = [int(state[species]) for state in trajectory]
-        ax.step(times, values, label=species, where="post")
+        ax.step(times, values, label=species, where="post", alpha=0.7)
 
     ax.set_title(title)
     ax.set_xlabel("Time steps")
     ax.set_xticks(range(len(trajectory)))
     ax.set_ylabel("State")
     ax.set_ylim(ymin=ymin, ymax=ymax)
-    ax.grid(True)
+    # ax.grid(True)
     ax.legend()
 
 

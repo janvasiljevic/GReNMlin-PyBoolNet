@@ -1,6 +1,7 @@
 import numpy as np
 import importlib
 import matplotlib.pyplot as plt
+from matplotlib import axes
 from scipy.integrate import solve_ivp
 import pandas as pd
 import os
@@ -174,6 +175,7 @@ def simulate_sequence(
     legend=True,
     xlabel="time [a.u.]",
     ylabel="concentrations [a.u.]",
+    ax: axes.Axes = None,
 ):
     if type(model) is bool:
         grn.generate_model()
@@ -213,13 +215,19 @@ def simulate_sequence(
             T = np.append(T, T1 + T[-1])
 
     if plot_on:
-        plt.plot(T, Y)
+        if ax is None:
+            fig, new_ax = plt.subplots(1, 1, figsize=(12, 6))
+        else:
+            new_ax = ax
+
+        new_ax.plot(T, Y)
         if legend:
-            plt.legend(grn.species_names)
+            new_ax.legend(grn.species_names)
 
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
+        new_ax.set_xlabel(xlabel)
+        new_ax.set_ylabel(ylabel)
 
-        plt.show()
+        if ax is None:
+            fig.show()
 
     return T, Y
