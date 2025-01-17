@@ -94,11 +94,11 @@ class GRN:
 
         for regulator in regulators:
             if regulator["name"] not in self.species_names:
-                print(f'{regulator["name"]} not in species!')
+                print(f"{regulator['name']} not in species!")
 
         for product in products:
             if product["name"] not in self.species_names:
-                print(f'{product["name"]} not in species!')
+                print(f"{product['name']} not in species!")
 
         self.genes.append(gene)
 
@@ -109,7 +109,7 @@ class GRN:
         equations: Dict[str, List[str]] = {}
 
         for species in self.species:
-            equations[species["name"]] = [f'-{species["name"]}*{species["delta"]}']
+            equations[species["name"]] = [f"-{species['name']}*{species['delta']}"]
 
         for gene in self.genes:
             up: List[str] = []
@@ -142,7 +142,7 @@ class GRN:
 
             down = "+".join(["1"] + powerset(down, op="*"))
 
-            terms = f'{gene["alpha"]}*({up})/({down})'
+            terms = f"{gene['alpha']}*({up})/({down})"
 
             for product in gene["products"]:
                 equations[product["name"]].append(terms)
@@ -165,7 +165,7 @@ class GRN:
             print(f"    {all_keys} = state", file=f)
 
             for key in equations.keys():
-                print(f'    d{key} = {"+".join(equations[key])}', file=f)
+                print(f"    d{key} = {'+'.join(equations[key])}", file=f)
 
             print(f"    return np.array([{all_dkeys}])", file=f)
 
