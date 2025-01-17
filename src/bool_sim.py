@@ -32,8 +32,6 @@ class BooleanNetwork:
         self.reverse_names = {v: k for k, v in self.original_names.items()}
         self.boolean_rules = self._generate_boolean_rules()
 
-        print("Boolean rules:", self.boolean_rules)
-
     def _generate_boolean_rules(self) -> Dict[str, str]:
         """
         Convert GRN structure to Boolean rules with renamed variables
@@ -88,6 +86,11 @@ class BooleanNetwork:
                 final_rules[species] = species
 
         return final_rules
+
+    def print_rules(self):
+        print("Boolean rules:")
+        for species, rule in self.boolean_rules.items():
+            print(f"{species} = {rule}")
 
     def _rules_to_bnet_text(self) -> str:
         """Convert boolean rules dictionary to BNet format text"""
@@ -192,8 +195,6 @@ class BooleanNetwork:
     def plot_interaction_graph(self, ax=None):
         primes = pyboolnet.file_exchange.bnet_text2primes(self._rules_to_bnet_text())
         G = pyboolnet.interaction_graphs.primes2igraph(primes)
-
-        print(primes)
 
         edges = [(self.reverse_names[e[0]], self.reverse_names[e[1]]) for e in G.edges]
         G = nx.DiGraph()

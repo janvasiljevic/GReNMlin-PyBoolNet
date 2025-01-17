@@ -16,6 +16,7 @@ brew install clingo
 - Type hints.
 - Deleted the `params.py` file.
 - PyBoolNet integration
+- Reading and simulation of qual SBML models
 
 - TODO: Matej/Enei/Lan add
 

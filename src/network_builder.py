@@ -17,7 +17,7 @@ class Builder:
     def __init__(self):
         self.grn = GRN()
 
-    def species(self, name, delta=None):
+    def species(self, name, delta=None) -> Species:
         if delta:
             self.grn.add_species(name, delta)
         else:
