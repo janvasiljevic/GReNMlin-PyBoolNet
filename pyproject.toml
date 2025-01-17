@@ -16,6 +16,7 @@ pyboolnet = { git = "https://github.com/hklarner/pyboolnet" }
 python-libsbml = "^5.20.4"
 simplesbml = "^2.3.0"
 numexpr = "^2.10.2"
+ipykernel = "^6.29.5"
 
 
 [build-system]
