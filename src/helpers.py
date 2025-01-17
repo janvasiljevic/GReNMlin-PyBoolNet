@@ -5,7 +5,7 @@ import itertools
 # if param is iterable with two elements, a value from a distribution is used
 def get_param_value(param, dist="uniform"):
     # if single value is specified
-    if type(param) == float or type(param) == int:
+    if isinstance(param, (float, int)):
         return param
 
     # if two values are specific generate a value from a uniform distribution

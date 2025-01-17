@@ -1,9 +1,10 @@
 import libsbml
 import networkx as nx
 import numexpr as ne
-import matplotlib.pyplot as plt
 from itertools import product
 from typing import TypedDict
+from collections import defaultdict
+import src.utils as utils
 
 
 class FunctionTerm(TypedDict):
@@ -41,7 +42,7 @@ class QualModel:
 
     def _parse_transitions(self):
         transitions = []
-        max_levels = {s: 0 for s in self.species}
+        max_levels = defaultdict(int)
         for i in range(self.model.getNumTransitions()):
             transition: libsbml.Transition = self.model.getTransition(i)
             inputs = [
@@ -126,32 +127,29 @@ class QualModel:
             ],
         }
 
-    def plot_network(self):
+    def plot_state_transitions(self, ax=None):
         attractors = self.find_attractors()
 
         def node_name(state):
             return "".join(f"{state[s]}" for s in self.species)
 
         edges = [(node_name(s), node_name(self.step(s))) for s in self._all_states()]
-        node_colors = {node_name(s): "lightblue" for s in self._all_states()}
-
-        for attr in attractors["steady_states"]:
-            node_colors[node_name(attr)] = "green"
-
-        for attrs in attractors["cyclic_attractors"]:
-            for a in attrs:
-                node_colors[node_name(a)] = "red"
 
         G = nx.DiGraph()
         G.add_edges_from(edges)
-        nx.draw(
-            G,
-            with_labels=True,
-            pos=nx.spring_layout(G, k=1, iterations=100),
-            node_size=1000,
-            node_color=[node_colors[n] for n in G.nodes],
-        )
-        plt.show()
+
+        utils.plot_state_transitions(G, attractors, node_name, ax)
+
+    def plot_interaction_graph(self, ax=None):
+        G = nx.MultiDiGraph()
+        for t in self.transitions:
+            for term in t["function_terms"]:
+                for i in t["inputs"]:
+                    if i in term["math"]:
+                        edges = [(i, o) for o in t["outputs"]]
+                        G.add_edges_from(edges)
+
+        utils.plot_interaction_graph(G, ax)
 
     def step(self, state: dict[str, int] | tuple[int, ...]) -> dict[str, int]:
         if isinstance(state, tuple):
@@ -174,3 +172,12 @@ class QualModel:
                 next_state[s] = 0
 
         return next_state
+
+    def simulate(
+        self, initial_state: dict[str, int], steps: int
+    ) -> list[dict[str, int]]:
+        trajectory = [initial_state]
+        for _ in range(steps):
+            next_state = self.step(trajectory[-1])
+            trajectory.append(next_state)
+        return trajectory

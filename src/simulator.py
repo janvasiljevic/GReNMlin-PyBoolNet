@@ -20,10 +20,10 @@ def generate_bin_vectors(INS_num):
 def get_steady(
     grn, model=False, rep_num=1, INS_def=False, INS_factor=1, eps=10 ** (-3)
 ):
-    if type(model) == bool:
+    if type(model) is bool:
         grn.generate_model()
         model = "model"
-    if type(model) == str:
+    if type(model) is str:
         # read the model module
         model_module = importlib.import_module(model.replace(os.sep, "."))
         model_module = importlib.reload(model_module)
@@ -66,10 +66,10 @@ def get_steady_single(
 ):
     # read the model module
 
-    if type(model) == bool:
+    if type(model) is bool:
         grn.generate_model()
         model = "model"
-    if type(model) == str:
+    if type(model) is str:
         model_module = importlib.import_module(model.replace(os.sep, "."))
         model_module = importlib.reload(model_module)
         model = model_module.solve_model
@@ -79,7 +79,7 @@ def get_steady_single(
 
     X0 = np.array(IN) * INS_factor
 
-    if type(R0) == bool:
+    if type(R0) is bool:
         R0 = np.random.random(n_RS)
 
     S0 = np.append(X0, R0)
@@ -126,10 +126,10 @@ def simulate_single(
     xlabel="time [a.u.]",
     ylabel="concentrations [a.u.]",
 ):
-    if type(model) == bool:
+    if type(model) is bool:
         grn.generate_model()
         model = "model"
-    if type(model) == str:
+    if type(model) is str:
         # read the model module
         model_module = importlib.import_module(model.replace(os.sep, "."))
         model_module = importlib.reload(model_module)
@@ -139,7 +139,7 @@ def simulate_single(
     n_RS = len(grn.species_names) - n_INS
 
     X0 = np.array(IN) * INS_factor
-    if type(R0) == bool:
+    if type(R0) is bool:
         R0 = np.random.random(n_RS)
 
     S0 = np.append(X0, R0)
@@ -175,10 +175,10 @@ def simulate_sequence(
     xlabel="time [a.u.]",
     ylabel="concentrations [a.u.]",
 ):
-    if type(model) == bool:
+    if type(model) is bool:
         grn.generate_model()
         model = "model"
-    if type(model) == str:
+    if type(model) is str:
         # read the model module
         model_module = importlib.import_module(model.replace(os.sep, "."))
         model_module = importlib.reload(model_module)
@@ -195,7 +195,7 @@ def simulate_sequence(
 
     for IN in IN_seq:
         X0 = np.array(IN) * INS_factor
-        if type(R0) == bool:
+        if type(R0) is bool:
             # R0 = np.random.random(n_RS)
             R0 = np.zeros(n_RS)
         else:
@@ -205,7 +205,7 @@ def simulate_sequence(
             grn, X0, model, INS_factor=1, t_end=t_single, plot_on=False, R0=R0
         )
 
-        if type(T) == bool:
+        if type(T) is bool:
             T = T1
             Y = Y1
         else:

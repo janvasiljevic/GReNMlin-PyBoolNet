@@ -2,9 +2,12 @@ import numpy as np
 from typing import Dict, List, Literal
 import pyboolnet.attractors
 import pyboolnet.file_exchange
+import pyboolnet.interaction_graphs
 import pyboolnet.state_transition_graphs
 import src.grn as grn
+import networkx as nx
 from typing import TypedDict
+import src.utils as utils
 
 
 class Attractors(TypedDict):
@@ -15,7 +18,7 @@ class Attractors(TypedDict):
 SimulationType = Literal["async", "sync"]
 
 
-class BooleanSolver:
+class BooleanNetwork:
     def __init__(self, grn: grn.GRN):
         """
         Initialize Boolean solver for a GRN
@@ -70,7 +73,7 @@ class BooleanSolver:
                 if activators:
                     terms.append(" | ".join(activators))
                 terms.extend([f"!{inh}" for inh in inhibitors])
-                expr = f'({" | ".join(terms)})'
+                expr = f"({' | '.join(terms)})"
 
             for product in products:
                 rules[product].append(expr)
@@ -175,6 +178,28 @@ class BooleanSolver:
             current_state = next_state.copy()
 
         return trajectory
+
+    def plot_state_transitions(self, ax=None):
+        primes = pyboolnet.file_exchange.bnet_text2primes(self._rules_to_bnet_text())
+        G = pyboolnet.state_transition_graphs.primes2stg(primes, "synchronous")
+
+        def node_name(state: Dict[str, bool]) -> str:
+            return "".join(f"{int(state[s])}" for s in self.grn.species_names)
+
+        attractors = self.find_attractors()
+        utils.plot_state_transitions(G, attractors, node_name, ax)
+
+    def plot_interaction_graph(self, ax=None):
+        primes = pyboolnet.file_exchange.bnet_text2primes(self._rules_to_bnet_text())
+        G = pyboolnet.interaction_graphs.primes2igraph(primes)
+
+        print(primes)
+
+        edges = [(self.reverse_names[e[0]], self.reverse_names[e[1]]) for e in G.edges]
+        G = nx.DiGraph()
+        G.add_edges_from(edges)
+
+        utils.plot_interaction_graph(G, ax)
 
     def find_attractors(self) -> Attractors:
         """
